@@ -1,0 +1,78 @@
+"""
+The `DateTime` scalar represents a date and time following the ISO 8601 standard
+"""
+scalar DateTime
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+union Morph = Restaurant | UploadFile | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser
+
+type Query {
+  restaurant(id: ID!): Restaurant
+  restaurants(sort: String, limit: Int, start: Int, where: JSON): [Restaurant]
+  files(sort: String, limit: Int, start: Int, where: JSON): [UploadFile]
+  role(id: ID!): UsersPermissionsRole
+
+  """
+  Retrieve all the existing roles. You can't apply filters on this query.
+  """
+  roles(sort: String, limit: Int, start: Int, where: JSON): [UsersPermissionsRole]
+  user(id: ID!): UsersPermissionsUser
+  users(sort: String, limit: Int, start: Int, where: JSON): [UsersPermissionsUser]
+}
+
+type Restaurant {
+  undefined: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String
+  description: String
+  image: UploadFile
+}
+
+type UploadFile {
+  undefined: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  hash: String!
+  sha256: String
+  ext: String
+  mime: String!
+  size: String!
+  url: String!
+  provider: String!
+  related: [Morph]
+}
+
+type UsersPermissionsPermission {
+  undefined: ID!
+  type: String!
+  controller: String!
+  action: String!
+  enabled: Boolean!
+  policy: String
+  role: UsersPermissionsRole
+}
+
+type UsersPermissionsRole {
+  undefined: ID!
+  name: String!
+  description: String
+  type: String
+  permissions: [UsersPermissionsPermission]
+  users: [UsersPermissionsUser]
+}
+
+type UsersPermissionsUser {
+  undefined: ID!
+  username: String!
+  email: String!
+  resetPasswordToken: String
+  confirmed: Boolean
+  blocked: Boolean
+  role: UsersPermissionsRole
+}
